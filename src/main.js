@@ -1,14 +1,8 @@
 const express = require('express')
 const {engine} = require('express-handlebars')
 const {join} = require('path');
+const {getFortune} = require('./lib/fortune')
 
-const fortunes = [
-    "Conquer your fears or they will conquer you.",
-    "Rivers need springs.",
-    "Do not fear what you don't know.",
-    "You will have a pleasant surprise.",
-    "Whenever possible, keep it simple.",
-]
 const app = express()
 const PORT = process.env.PORT || 4000
 
@@ -23,8 +17,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/about', (req, res) => {
-    const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)]
-    res.render('about', {fortune: randomFortune})
+    res.render('about', {fortune: getFortune()})
 })
 
 app.use((req, res) => {
