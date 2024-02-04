@@ -1,34 +1,31 @@
-const express = require('express')
-const {engine} = require('express-handlebars')
-const {join} = require('path');
-const {getFortune} = require('./lib/fortune')
+const express = require('express');
+const { engine } = require('express-handlebars');
+const { join } = require('path');
+const {
+  home, about, notFound, serverError,
+} = require('./lib/handlers');
 
-const app = express()
-const PORT = process.env.PORT || 4000
+const app = express();
+const PORT = process.env.PORT || 4000;
 
-app.engine('handlebars', engine())
-app.set('view engine', 'handlebars')
-app.set('views', join(__dirname, 'views'))
+app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
+app.set('views', join(__dirname, 'views'));
 
-app.use(express.static(join(__dirname, 'public')))
+app.use(express.static(join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-    res.render('home')
-})
+app.get('/', home);
 
-app.get('/about', (req, res) => {
-    res.render('about', {fortune: getFortune()})
-})
+app.get('/about', about);
 
-app.use((req, res) => {
-    res.status(404).render('404')
-})
+app.use(notFound);
 
-app.use((err, req, res, next) => {
-    console.log(err.message)
-    res.status(500).render('500')
-})
+app.use(serverError);
 
-app.listen(PORT, () => {
-    console.log(`Server is listening on port: ${PORT}`)
-})
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server is listening on http:://localhost:${PORT}; press Ctrl-C to terminate.`);
+  });
+} else {
+  module.exports = app;
+}
